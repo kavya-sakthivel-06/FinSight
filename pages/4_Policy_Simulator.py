@@ -36,10 +36,11 @@ customer approvals, portfolio value and financial risk.
 st.markdown("---")
 
 # ============================================================
-# SIDEBAR
+# SIDEBAR — POLICY CONTROLS
 # ============================================================
 
-st.sidebar.header("Policy Controls")
+st.sidebar.header("🎛️ Policy Controls")
+st.sidebar.caption("Adjust lending rules and test their portfolio impact.")
 
 minimum_income = st.sidebar.slider(
     "Minimum Annual Income ($)",
@@ -56,56 +57,94 @@ minimum_employment = st.sidebar.slider(
     value=1
 )
 
+maximum_interest = st.sidebar.slider(
+    "Maximum Interest Rate (%)",
+    min_value=float(df["loan_int_rate"].min()),
+    max_value=float(df["loan_int_rate"].max()),
+    value=float(df["loan_int_rate"].max()),
+    step=0.5
+)
+
+accepted_grades = st.sidebar.multiselect(
+    "Accepted Loan Grades",
+    sorted(df["loan_grade"].dropna().unique()),
+    default=sorted(df["loan_grade"].dropna().unique())
+)
+
 allow_previous_default = st.sidebar.checkbox(
     "Allow Previous Defaulters",
     value=True
 )
 
-accepted_grades = st.sidebar.multiselect(
-    "Accepted Loan Grades",
-    sorted(df["loan_grade"].unique()),
-    default=sorted(df["loan_grade"].unique())
-)
-
-maximum_interest = st.sidebar.slider(
-    "Maximum Interest Rate (%)",
-    min_value=float(df["loan_int_rate"].min()),
-    max_value=float(df["loan_int_rate"].max()),
-    value=float(df["loan_int_rate"].max())
-)
-
 st.sidebar.markdown("---")
 
-simulate = st.sidebar.button("🚀 Run Simulation")
+simulate = st.sidebar.button(
+    "🚀 Run Policy Simulation",
+    use_container_width=True
+)
+
 
 # ============================================================
-# APPLY POLICY
+# DEFAULT STATE
 # ============================================================
 
-policy_df = df.copy()
+if "simulation_run" not in st.session_state:
+    st.session_state.simulation_run = False
 
-policy_df = policy_df[
-    policy_df["person_income"] >= minimum_income
-]
+if simulate:
+    st.session_state.simulation_run = True
 
-policy_df = policy_df[
-    policy_df["person_emp_length"] >= minimum_employment
-]
 
-policy_df = policy_df[
-    policy_df["loan_grade"].isin(accepted_grades)
-]
+# ============================================================
+# POLICY SIMULATION
+# ============================================================
 
-policy_df = policy_df[
-    policy_df["loan_int_rate"] <= maximum_interest
-]
+if st.session_state.simulation_run:
 
-if not allow_previous_default:
+    policy_df = df.copy()
+
+    # Income rule
     policy_df = policy_df[
-        policy_df["cb_person_default_on_file"] == "N"
+        policy_df["person_income"] >= minimum_income
     ]
 
-st.markdown("---")
+    # Employment rule
+    policy_df = policy_df[
+        policy_df["person_emp_length"] >= minimum_employment
+    ]
+
+    # Loan grade rule
+    policy_df = policy_df[
+        policy_df["loan_grade"].isin(accepted_grades)
+    ]
+
+    # Interest rate rule
+    policy_df = policy_df[
+        policy_df["loan_int_rate"] <= maximum_interest
+    ]
+
+    # Previous default rule
+    if not allow_previous_default:
+        policy_df = policy_df[
+            policy_df["cb_person_default_on_file"] == "N"
+        ]
+
+else:
+
+    # Show original portfolio before simulation
+    policy_df = df.copy()
+
+
+# ============================================================
+# SIMULATION STATUS
+# ============================================================
+
+if not st.session_state.simulation_run:
+
+    st.info(
+        "👈 Configure the lending rules in the sidebar and click "
+        "**Run Policy Simulation** to evaluate the proposed policy."
+    )
 
 # ============================================================
 # KPI CARDS
@@ -361,90 +400,142 @@ health_score = (
 
 health_score = max(0, min(100, health_score))
 
-# -------------------------------------------------------
-# KPI CARDS
-# -------------------------------------------------------
+# ============================================================
+# PORTFOLIO IMPACT KPIs
+# ============================================================
+
+approved = len(policy_df)
+
+approval_rate = (
+    approved / len(df) * 100
+    if len(df) > 0 else 0
+)
+
+portfolio_value = policy_df["loan_amnt"].sum()
+
+estimated_default = (
+    policy_df["loan_status"].mean() * 100
+    if approved > 0 else 0
+)
+
+original_default = df["loan_status"].mean() * 100
+
+default_change = estimated_default - original_default
+
+
+st.markdown("### 📊 Simulated Portfolio")
 
 c1, c2, c3, c4 = st.columns(4)
 
-c1.metric(
-    "Customers Rejected",
-    f"{customers_rejected:,}"
-)
+with c1:
+    st.metric(
+        "Eligible Customers",
+        f"{approved:,}",
+        f"{approved - len(df):+,}"
+    )
 
-c2.metric(
-    "Risk Reduction",
-    f"{risk_reduction:.2f}%"
-)
+with c2:
+    st.metric(
+        "Approval Rate",
+        f"{approval_rate:.2f}%"
+    )
 
-c3.metric(
-    "Estimated Interest Revenue",
-    f"${estimated_interest:,.0f}"
-)
+with c3:
+    st.metric(
+        "Loan Exposure",
+        f"${portfolio_value:,.0f}"
+    )
 
-c4.metric(
-    "Portfolio Health",
-    f"{health_score:.0f}/100"
-)
+with c4:
+    st.metric(
+        "Estimated Default Rate",
+        f"{estimated_default:.2f}%",
+        f"{default_change:+.2f}%"
+    )
+
+# ============================================================
+# BEFORE VS SIMULATED PORTFOLIO
+# ============================================================
 
 st.markdown("---")
 
-# ============================================================
-# BEFORE VS AFTER COMPARISON
-# ============================================================
+st.header("🔄 Policy Impact Comparison")
+
+original_customers = len(df)
+simulated_customers = len(policy_df)
+
+original_loan_value = df["loan_amnt"].sum()
+simulated_loan_value = policy_df["loan_amnt"].sum()
+
+original_default = df["loan_status"].mean() * 100
+
+simulated_default = (
+    policy_df["loan_status"].mean() * 100
+    if len(policy_df) > 0 else 0
+)
 
 comparison = pd.DataFrame({
     "Metric": [
-        "Original",
-        "Simulated"
+        "Customers",
+        "Loan Exposure",
+        "Default Rate"
     ],
-    "Default Rate": [
-        original_default,
-        new_default
-    ],
-    "Approved Customers": [
+    "Current Portfolio": [
         original_customers,
-        approved_customers
+        original_loan_value,
+        original_default
+    ],
+    "Simulated Portfolio": [
+        simulated_customers,
+        simulated_loan_value,
+        simulated_default
     ]
 })
 
 left, right = st.columns(2)
 
-fig7 = px.bar(
-    comparison,
-    x="Metric",
-    y="Default Rate",
-    color="Metric",
-    text_auto=".2f",
-    title="Default Rate Comparison"
-)
-
-fig7.update_layout(
-    template="plotly_white",
-    showlegend=False
-)
-
 with left:
-    st.plotly_chart(fig7, use_container_width=True)
 
-fig8 = px.bar(
-    comparison,
-    x="Metric",
-    y="Approved Customers",
-    color="Metric",
-    text_auto=".0f",
-    title="Customer Approval Comparison"
-)
+    fig_customers = px.bar(
+        comparison,
+        x="Metric",
+        y="Current Portfolio",
+        title="Current Portfolio",
+        text_auto=".2s"
+    )
 
-fig8.update_layout(
-    template="plotly_white",
-    showlegend=False
-)
+    fig_customers.update_layout(
+        template="plotly_white",
+        showlegend=False,
+        height=380
+    )
+
+    st.plotly_chart(
+        fig_customers,
+        use_container_width=True
+    )
+
 
 with right:
-    st.plotly_chart(fig8, use_container_width=True)
 
-st.markdown("---")
+    fig_simulated = px.bar(
+        comparison,
+        x="Metric",
+        y="Simulated Portfolio",
+        title="Simulated Portfolio",
+        text_auto=".2s"
+    )
+
+    fig_simulated.update_layout(
+        template="plotly_white",
+        showlegend=False,
+        height=380
+    )
+
+    st.plotly_chart(
+        fig_simulated,
+        use_container_width=True
+    )
 
 # ============================================================
 # AI DECISION SUMMARY
