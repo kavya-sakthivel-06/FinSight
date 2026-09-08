@@ -2,6 +2,19 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 
+
+import os
+
+# Load global FinSight AI styling
+css_path = "assets/style.css"
+
+if os.path.exists(css_path):
+    with open(css_path) as f:
+        st.markdown(
+            f"<style>{f.read()}</style>",
+            unsafe_allow_html=True
+        )
+
 # ============================================================
 # PAGE CONFIG
 # ============================================================
@@ -278,6 +291,148 @@ with right:
     st.plotly_chart(fig3, use_container_width=True)
 
 st.markdown("---")
+# ============================================================
+# RISK HEATMAP
+# ============================================================
+
+st.markdown("---")
+
+st.header("🔥 Risk Concentration Heatmap")
+
+st.caption(
+    "Default rate across loan grades and customer income segments."
+)
+
+heatmap_df = (
+    policy_df
+    .groupby(["loan_grade", "income_category"], observed=True)
+    .agg(
+        Customers=("loan_status", "count"),
+        Default_Rate=("loan_status", "mean")
+    )
+    .reset_index()
+)
+
+heatmap_df["Default_Rate"] = (
+    heatmap_df["Default_Rate"] * 100
+)
+
+heatmap_pivot = heatmap_df.pivot(
+    index="loan_grade",
+    columns="income_category",
+    values="Default_Rate"
+)
+
+fig_heatmap = px.imshow(
+    heatmap_pivot,
+    text_auto=".1f",
+    aspect="auto",
+    labels={
+        "x": "Income Category",
+        "y": "Loan Grade",
+        "color": "Default Rate (%)"
+    },
+    title="Default Rate by Loan Grade and Income Category"
+)
+
+fig_heatmap.update_layout(
+    template="plotly_white",
+    height=500
+)
+
+st.plotly_chart(
+    fig_heatmap,
+    use_container_width=True
+)
+
+# ============================================================
+# INCOME VS LOAN AMOUNT — RISK SCATTER
+# ============================================================
+
+st.markdown("---")
+
+st.header("📈 Borrower Risk Landscape")
+
+st.caption(
+    "Explore the relationship between customer income, loan amount "
+    "and observed credit risk."
+)
+
+scatter_df = policy_df.copy()
+
+scatter_df["Risk Status"] = scatter_df["loan_status"].map(
+    {
+        0: "No Default",
+        1: "Default"
+    }
+)
+
+fig_scatter = px.scatter(
+    scatter_df,
+    x="person_income",
+    y="loan_amnt",
+    color="Risk Status",
+    size="loan_amnt",
+    hover_data=[
+        "loan_grade",
+        "loan_intent",
+        "loan_int_rate",
+        "person_emp_length",
+        "income_category"
+    ],
+    labels={
+        "person_income": "Annual Income ($)",
+        "loan_amnt": "Loan Amount ($)"
+    },
+    title="Income vs Loan Amount by Default Status",
+    opacity=0.65
+)
+
+fig_scatter.update_layout(
+    template="plotly_white",
+    height=550
+)
+
+st.plotly_chart(
+    fig_scatter,
+    use_container_width=True
+)
+# ============================================================
+# AUTOMATED VISUAL INSIGHT
+# ============================================================
+
+st.markdown("---")
+
+st.header("🧠 Key Visual Insight")
+
+if len(policy_df) > 0:
+
+    highest_risk_group = (
+        heatmap_df
+        .sort_values("Default_Rate", ascending=False)
+        .iloc[0]
+    )
+
+    st.info(
+        f"""
+        **Highest observed-risk segment:** 
+        Loan Grade **{highest_risk_group['loan_grade']}** combined with
+        **{highest_risk_group['income_category']}** income category.
+
+        Observed default rate in this segment:
+        **{highest_risk_group['Default_Rate']:.2f}%**
+
+        This segment can be investigated further before expanding lending
+        exposure to similar borrowers.
+        """
+    )
+
+else:
+
+    st.warning(
+        "No customers satisfy the selected policy. "
+        "Relax one or more policy conditions."
+    )
 
 # ============================================================
 # THIRD ROW
@@ -541,7 +696,7 @@ with right:
 # AI DECISION SUMMARY
 # ============================================================
 
-st.header("🤖 AI Decision Summary")
+st.header("🧠 Decision Intelligence Summary")
 
 summary = []
 

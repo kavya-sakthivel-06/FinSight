@@ -2,6 +2,18 @@ import streamlit as st
 import pandas as pd
 import plotly.express as px
 
+import os
+
+# Load global FinSight AI styling
+css_path = "assets/style.css"
+
+if os.path.exists(css_path):
+    with open(css_path) as f:
+        st.markdown(
+            f"<style>{f.read()}</style>",
+            unsafe_allow_html=True
+        )
+
 st.set_page_config(
     page_title="Executive Report",
     page_icon="📋",

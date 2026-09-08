@@ -1,0 +1,364 @@
+/* ============================================================
+   FINSIGHT AI — DARK NAVY FINTECH DESIGN SYSTEM
+   ============================================================ */
+
+:root {
+    --bg-primary:     #0b0f1a;
+    --bg-secondary:   #10162a;
+    --bg-card:        #131b31;
+    --bg-card-hover:  #17203a;
+    --border-subtle:  #232d4a;
+    --border-glow:    #2f3d66;
+
+    --text-primary:   #eef1fb;
+    --text-secondary: #a6b0cc;
+    --text-muted:     #6d7695;
+
+    --accent-blue:    #4f8cff;
+    --accent-cyan:    #35d4d4;
+    --accent-violet:  #8f6bff;
+    --accent-green:   #2fd18b;
+    --accent-amber:   #f2b84b;
+    --accent-red:     #ff5d7a;
+
+    --glow-blue:      rgba(79, 140, 255, 0.25);
+    --glow-cyan:      rgba(53, 212, 212, 0.18);
+}
+
+/* ============================================================
+   BASE APP
+   ============================================================ */
+
+.stApp {
+    background:
+        radial-gradient(circle at 15% 0%, rgba(79, 140, 255, 0.08), transparent 45%),
+        radial-gradient(circle at 85% 20%, rgba(143, 107, 255, 0.07), transparent 40%),
+        var(--bg-primary);
+    color: var(--text-primary);
+}
+
+.main .block-container {
+    padding-top: 2rem;
+    padding-bottom: 3rem;
+    max-width: 1450px;
+}
+
+/* Force readable text everywhere by default */
+.stApp, .stApp p, .stApp span, .stApp label, .stApp li,
+.stMarkdown, [data-testid="stMetricValue"], [data-testid="stMetricLabel"] {
+    color: var(--text-primary);
+}
+
+.stApp p, .stMarkdown p {
+    color: var(--text-secondary);
+}
+
+
+/* ============================================================
+   HEADINGS
+   ============================================================ */
+
+h1 {
+    font-size: 2.3rem !important;
+    font-weight: 750 !important;
+    margin-bottom: 0.2rem !important;
+    color: var(--text-primary) !important;
+    background: linear-gradient(90deg, #ffffff 0%, var(--accent-cyan) 120%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.01em;
+}
+
+h2 {
+    font-size: 1.6rem !important;
+    font-weight: 650 !important;
+    color: var(--text-primary) !important;
+    border-left: 4px solid var(--accent-blue);
+    padding-left: 12px;
+}
+
+h3 {
+    font-size: 1.2rem !important;
+    font-weight: 600 !important;
+    color: var(--text-primary) !important;
+}
+
+
+/* ============================================================
+   KPI CARDS
+   ============================================================ */
+
+.kpi-card {
+    background: linear-gradient(160deg, var(--bg-card) 0%, var(--bg-secondary) 100%);
+    padding: 20px 22px;
+    border-radius: 16px;
+    border: 1px solid var(--border-subtle);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+    min-height: 120px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+.kpi-card::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent-blue), var(--accent-cyan));
+}
+
+.kpi-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--border-glow);
+    box-shadow: 0 8px 28px var(--glow-blue);
+}
+
+.kpi-title {
+    font-size: 0.8rem;
+    font-weight: 650;
+    margin-bottom: 8px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.kpi-value {
+    font-size: 1.9rem;
+    font-weight: 750;
+    color: var(--text-primary);
+}
+
+.kpi-description {
+    font-size: 0.78rem;
+    margin-top: 6px;
+    color: var(--text-muted);
+}
+
+
+/* ============================================================
+   SECTION / INSIGHT CARDS
+   ============================================================ */
+
+.insight-card {
+    background: var(--bg-card);
+    padding: 22px;
+    border-radius: 16px;
+    border: 1px solid var(--border-subtle);
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.3);
+    margin-bottom: 18px;
+    color: var(--text-secondary);
+    transition: border-color 0.18s ease;
+}
+
+.insight-card:hover {
+    border-color: var(--border-glow);
+}
+
+
+/* ============================================================
+   DECISION / RECOMMENDATION CARDS
+   ============================================================ */
+
+.decision-card {
+    background: var(--bg-card);
+    padding: 20px;
+    border-radius: 14px;
+    border-left: 4px solid var(--accent-blue);
+    border-top: 1px solid var(--border-subtle);
+    border-right: 1px solid var(--border-subtle);
+    border-bottom: 1px solid var(--border-subtle);
+    margin-bottom: 15px;
+    box-shadow: 0 3px 14px rgba(0, 0, 0, 0.25);
+}
+
+.decision-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin-bottom: 7px;
+    color: var(--text-primary);
+}
+
+.decision-text {
+    font-size: 0.9rem;
+    line-height: 1.55;
+    color: var(--text-secondary);
+}
+
+/* Risk-level variants — use these classes on decision-card for semantic color */
+.decision-card.risk-low     { border-left-color: var(--accent-green); }
+.decision-card.risk-medium  { border-left-color: var(--accent-amber); }
+.decision-card.risk-high    { border-left-color: var(--accent-red); }
+
+
+/* ============================================================
+   SIMULATOR RESULT
+   ============================================================ */
+
+.simulation-result {
+    background: linear-gradient(160deg, var(--bg-card) 0%, var(--bg-secondary) 100%);
+    padding: 26px;
+    border-radius: 18px;
+    border: 1px solid var(--border-glow);
+    box-shadow: 0 6px 24px var(--glow-cyan);
+    margin-top: 15px;
+}
+
+.simulation-label {
+    font-size: 0.8rem;
+    font-weight: 650;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.simulation-value {
+    font-size: 1.75rem;
+    font-weight: 750;
+    background: linear-gradient(90deg, var(--accent-cyan), var(--accent-blue));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+
+/* ============================================================
+   SIDEBAR
+   ============================================================ */
+
+[data-testid="stSidebar"] {
+    background: var(--bg-secondary);
+    border-right: 1px solid var(--border-subtle);
+}
+
+[data-testid="stSidebar"] * {
+    color: var(--text-primary);
+}
+
+[data-testid="stSidebar"] h2 {
+    font-size: 1.2rem !important;
+    border-left: none;
+    padding-left: 0;
+    color: var(--accent-cyan) !important;
+}
+
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+
+.stButton > button {
+    border-radius: 10px;
+    font-weight: 650;
+    padding: 0.55rem 1.1rem;
+    background: linear-gradient(135deg, var(--accent-blue), var(--accent-violet));
+    color: #ffffff;
+    border: none;
+    box-shadow: 0 3px 14px var(--glow-blue);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.stButton > button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px var(--glow-blue);
+    color: #ffffff;
+}
+
+
+/* ============================================================
+   TABS
+   ============================================================ */
+
+.stTabs [data-baseweb="tab-list"] {
+    gap: 4px;
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.stTabs [data-baseweb="tab"] {
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+.stTabs [aria-selected="true"] {
+    color: var(--accent-cyan) !important;
+    border-bottom: 2px solid var(--accent-cyan) !important;
+}
+
+
+/* ============================================================
+   INPUTS / SELECTS
+   ============================================================ */
+
+.stTextInput input, .stNumberInput input, .stSelectbox div[data-baseweb="select"] {
+    background-color: var(--bg-card) !important;
+    color: var(--text-primary) !important;
+    border: 1px solid var(--border-subtle) !important;
+    border-radius: 8px !important;
+}
+
+
+/* ============================================================
+   DATAFRAME
+   ============================================================ */
+
+[data-testid="stDataFrame"] {
+    border-radius: 14px;
+    overflow: hidden;
+    border: 1px solid var(--border-subtle);
+}
+
+
+/* ============================================================
+   ALERT / INFO BOXES
+   ============================================================ */
+
+.stAlert {
+    border-radius: 12px;
+    background-color: var(--bg-card) !important;
+    border: 1px solid var(--border-subtle) !important;
+}
+
+
+/* ============================================================
+   METRICS (native st.metric)
+   ============================================================ */
+
+[data-testid="stMetric"] {
+    background: var(--bg-card);
+    border: 1px solid var(--border-subtle);
+    border-radius: 14px;
+    padding: 14px 18px;
+}
+
+
+/* ============================================================
+   DIVIDERS
+   ============================================================ */
+
+hr {
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+    border: none;
+    border-top: 1px solid var(--border-subtle);
+}
+
+
+/* ============================================================
+   SCROLLBAR (nice-to-have polish)
+   ============================================================ */
+
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+::-webkit-scrollbar-track {
+    background: var(--bg-primary);
+}
+::-webkit-scrollbar-thumb {
+    background: var(--border-glow);
+    border-radius: 6px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-blue);
+}
