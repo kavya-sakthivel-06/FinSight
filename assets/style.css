@@ -1,6 +1,9 @@
 /* ============================================================
-   FINSIGHT AI — DARK NAVY FINTECH DESIGN SYSTEM
+   FINSIGHT AI — DARK NAVY FINTECH DESIGN SYSTEM (v2)
+   Enhanced with layered depth, motion, patterns & iconography
    ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap');
 
 :root {
     --bg-primary:     #0b0f1a;
@@ -23,18 +26,42 @@
 
     --glow-blue:      rgba(79, 140, 255, 0.25);
     --glow-cyan:      rgba(53, 212, 212, 0.18);
+    --glow-green:     rgba(47, 209, 139, 0.20);
+    --glow-red:       rgba(255, 93, 122, 0.20);
+
+    --font-display: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+    --font-body:    'Inter', system-ui, -apple-system, sans-serif;
 }
 
 /* ============================================================
-   BASE APP
+   BASE APP — layered depth: gradients + grid + drifting aurora
    ============================================================ */
 
 .stApp {
-    background:
+    font-family: var(--font-body);
+    /* All ambient effects are plain background layers on .stApp itself —
+       no fixed/absolute overlay elements, so nothing can ever paint over
+       your actual widgets and content. */
+    background-image:
+        radial-gradient(420px circle at 20% 25%, var(--glow-blue), transparent 70%),
+        radial-gradient(360px circle at 80% 70%, var(--glow-cyan), transparent 70%),
         radial-gradient(circle at 15% 0%, rgba(79, 140, 255, 0.08), transparent 45%),
         radial-gradient(circle at 85% 20%, rgba(143, 107, 255, 0.07), transparent 40%),
-        var(--bg-primary);
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64' viewBox='0 0 64 64'%3E%3Cpath d='M0 .5H64M.5 0V64' fill='none' stroke='%23202a47' stroke-width='1'/%3E%3C/svg%3E");
+    background-position:
+        20% 25%, 80% 70%, 15% 0%, 85% 20%, 0 0;
+    background-repeat: no-repeat, no-repeat, no-repeat, no-repeat, repeat;
+    background-color: var(--bg-primary);
+    animation: aurora-drift 26s ease-in-out infinite alternate;
     color: var(--text-primary);
+}
+
+/* Slow, subtle drift of the two glow layers only — a single orchestrated
+   ambient cue, not scattered motion. Background-position keeps this
+   contained to .stApp's own paint, never an overlay above content. */
+@keyframes aurora-drift {
+    0%   { background-position: 18% 22%, 82% 72%, 15% 0%, 85% 20%, 0 0; }
+    100% { background-position: 24% 30%, 76% 64%, 15% 0%, 85% 20%, 0 0; }
 }
 
 .main .block-container {
@@ -43,7 +70,6 @@
     max-width: 1450px;
 }
 
-/* Force readable text everywhere by default */
 .stApp, .stApp p, .stApp span, .stApp label, .stApp li,
 .stMarkdown, [data-testid="stMetricValue"], [data-testid="stMetricLabel"] {
     color: var(--text-primary);
@@ -59,8 +85,11 @@
    ============================================================ */
 
 h1 {
+    position: relative;
+    display: inline-block;
+    font-family: var(--font-display);
     font-size: 2.3rem !important;
-    font-weight: 750 !important;
+    font-weight: 700 !important;
     margin-bottom: 0.2rem !important;
     color: var(--text-primary) !important;
     background: linear-gradient(90deg, #ffffff 0%, var(--accent-cyan) 120%);
@@ -68,17 +97,34 @@ h1 {
     background-clip: text;
     -webkit-text-fill-color: transparent;
     letter-spacing: -0.01em;
+    width: fit-content;
+}
+
+/* Faint chart-line silhouette riding behind the main title —
+   a single grounded, subject-matter motif rather than generic shapes */
+h1::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -10px;
+    width: 220px;
+    height: 34px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='34' viewBox='0 0 220 34'%3E%3Cpath d='M0 26 L20 22 L38 27 L55 14 L72 18 L90 6 L108 12 L126 4 L144 16 L162 9 L180 20 L198 11 L220 17' fill='none' stroke='%2335d4d4' stroke-width='1.5' opacity='0.35'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    pointer-events: none;
 }
 
 h2 {
+    font-family: var(--font-display);
     font-size: 1.6rem !important;
-    font-weight: 650 !important;
+    font-weight: 600 !important;
     color: var(--text-primary) !important;
     border-left: 4px solid var(--accent-blue);
     padding-left: 12px;
 }
 
 h3 {
+    font-family: var(--font-display);
     font-size: 1.2rem !important;
     font-weight: 600 !important;
     color: var(--text-primary) !important;
@@ -109,10 +155,37 @@ h3 {
     background: linear-gradient(90deg, var(--accent-blue), var(--accent-cyan));
 }
 
+/* Faint corner watermark grid, echoing a mini price chart */
+.kpi-card::after {
+    content: "";
+    position: absolute;
+    right: -6px;
+    bottom: -6px;
+    width: 64px;
+    height: 40px;
+    opacity: 0.18;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='40' viewBox='0 0 64 40'%3E%3Cpolyline points='0,32 10,26 20,30 30,16 40,20 50,8 64,14' fill='none' stroke='%234f8cff' stroke-width='2'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    pointer-events: none;
+}
+
 .kpi-card:hover {
     transform: translateY(-3px);
     border-color: var(--border-glow);
     box-shadow: 0 8px 28px var(--glow-blue);
+}
+
+/* Reserve for a card actively streaming/live data — animated sweep,
+   used sparingly (opt-in class), not applied to every card */
+.kpi-card.live::before {
+    background: linear-gradient(90deg, var(--accent-green), var(--accent-cyan), var(--accent-green));
+    background-size: 200% 100%;
+    animation: sweep 3s linear infinite;
+}
+
+@keyframes sweep {
+    0%   { background-position: 0% 0%; }
+    100% { background-position: 200% 0%; }
 }
 
 .kpi-title {
@@ -125,15 +198,100 @@ h3 {
 }
 
 .kpi-value {
+    font-family: var(--font-display);
     font-size: 1.9rem;
-    font-weight: 750;
+    font-weight: 700;
     color: var(--text-primary);
+    font-variant-numeric: tabular-nums;
 }
 
 .kpi-description {
     font-size: 0.78rem;
     margin-top: 6px;
     color: var(--text-muted);
+}
+
+
+/* ============================================================
+   TREND / STATUS BADGES  (up · down · flat · live)
+   ============================================================ */
+
+.trend-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 9px 3px 7px;
+    border-radius: 999px;
+    font-size: 0.76rem;
+    font-weight: 650;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+}
+
+.trend-badge::before {
+    content: "";
+    width: 0;
+    height: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+}
+
+.trend-badge.up {
+    color: var(--accent-green);
+    background: rgba(47, 209, 139, 0.12);
+    border: 1px solid rgba(47, 209, 139, 0.3);
+}
+.trend-badge.up::before { border-bottom: 6px solid var(--accent-green); }
+
+.trend-badge.down {
+    color: var(--accent-red);
+    background: rgba(255, 93, 122, 0.12);
+    border: 1px solid rgba(255, 93, 122, 0.3);
+}
+.trend-badge.down::before { border-top: 6px solid var(--accent-red); }
+
+.trend-badge.flat {
+    color: var(--text-muted);
+    background: rgba(109, 118, 149, 0.12);
+    border: 1px solid rgba(109, 118, 149, 0.3);
+}
+.trend-badge.flat::before {
+    border: none;
+    width: 7px;
+    height: 2px;
+    background: var(--text-muted);
+    border-radius: 2px;
+}
+
+/* Small pulsing dot for "live" market data indicators */
+.live-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent-green);
+    box-shadow: 0 0 0 0 var(--glow-green);
+    animation: pulse-dot 1.8s ease-out infinite;
+    margin-right: 6px;
+    vertical-align: middle;
+}
+
+@keyframes pulse-dot {
+    0%   { box-shadow: 0 0 0 0 rgba(47, 209, 139, 0.55); }
+    70%  { box-shadow: 0 0 0 8px rgba(47, 209, 139, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(47, 209, 139, 0); }
+}
+
+/* Generic tag / label pill, e.g. asset class, model version */
+.badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    background: var(--bg-card-hover);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-secondary);
 }
 
 
@@ -156,14 +314,26 @@ h3 {
     border-color: var(--border-glow);
 }
 
+/* Frosted-glass alternative for overlays, summary panels, modals */
+.glass-card {
+    background: rgba(19, 27, 49, 0.55);
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 16px;
+    padding: 22px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
 
 /* ============================================================
    DECISION / RECOMMENDATION CARDS
    ============================================================ */
 
 .decision-card {
+    position: relative;
     background: var(--bg-card);
-    padding: 20px;
+    padding: 20px 20px 20px 22px;
     border-radius: 14px;
     border-left: 4px solid var(--accent-blue);
     border-top: 1px solid var(--border-subtle);
@@ -174,6 +344,7 @@ h3 {
 }
 
 .decision-title {
+    font-family: var(--font-display);
     font-size: 1.05rem;
     font-weight: 700;
     margin-bottom: 7px;
@@ -186,10 +357,20 @@ h3 {
     color: var(--text-secondary);
 }
 
-/* Risk-level variants — use these classes on decision-card for semantic color */
-.decision-card.risk-low     { border-left-color: var(--accent-green); }
-.decision-card.risk-medium  { border-left-color: var(--accent-amber); }
-.decision-card.risk-high    { border-left-color: var(--accent-red); }
+/* Risk-level variants with a matching soft glow, so severity reads
+   at a glance even before the copy is read */
+.decision-card.risk-low {
+    border-left-color: var(--accent-green);
+    box-shadow: 0 3px 14px rgba(0, 0, 0, 0.25), inset 40px 0 60px -50px var(--glow-green);
+}
+.decision-card.risk-medium {
+    border-left-color: var(--accent-amber);
+    box-shadow: 0 3px 14px rgba(0, 0, 0, 0.25), inset 40px 0 60px -50px rgba(242, 184, 75, 0.18);
+}
+.decision-card.risk-high {
+    border-left-color: var(--accent-red);
+    box-shadow: 0 3px 14px rgba(0, 0, 0, 0.25), inset 40px 0 60px -50px var(--glow-red);
+}
 
 
 /* ============================================================
@@ -197,12 +378,30 @@ h3 {
    ============================================================ */
 
 .simulation-result {
+    position: relative;
+    overflow: hidden;
     background: linear-gradient(160deg, var(--bg-card) 0%, var(--bg-secondary) 100%);
     padding: 26px;
     border-radius: 18px;
     border: 1px solid var(--border-glow);
     box-shadow: 0 6px 24px var(--glow-cyan);
     margin-top: 15px;
+}
+
+/* Oversized watermark chart line — the one deliberate "hero" flourish
+   for the single most important number on the page */
+.simulation-result::after {
+    content: "";
+    position: absolute;
+    right: -10px;
+    bottom: -10px;
+    width: 55%;
+    height: 70%;
+    opacity: 0.12;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='120' viewBox='0 0 260 120'%3E%3Cpolyline points='0,100 25,90 50,96 75,60 100,72 125,40 150,52 175,20 200,34 225,10 260,18' fill='none' stroke='%2335d4d4' stroke-width='3'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: bottom right;
+    pointer-events: none;
 }
 
 .simulation-label {
@@ -214,12 +413,51 @@ h3 {
 }
 
 .simulation-value {
+    font-family: var(--font-display);
     font-size: 1.75rem;
-    font-weight: 750;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
     background: linear-gradient(90deg, var(--accent-cyan), var(--accent-blue));
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
+}
+
+
+/* ============================================================
+   MARKET TICKER STRIP (optional decorative component)
+   Wrap ticker items in: <div class="ticker-strip"><div class="ticker-track">...</div></div>
+   ============================================================ */
+
+.ticker-strip {
+    overflow: hidden;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-subtle);
+    border-radius: 10px;
+    padding: 8px 0;
+    margin-bottom: 16px;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent);
+}
+
+.ticker-track {
+    display: flex;
+    width: max-content;
+    gap: 36px;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    animation: ticker-scroll 28s linear infinite;
+}
+
+.ticker-strip:hover .ticker-track {
+    animation-play-state: paused;
+}
+
+@keyframes ticker-scroll {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
 }
 
 
@@ -249,6 +487,7 @@ h3 {
    ============================================================ */
 
 .stButton > button {
+    position: relative;
     border-radius: 10px;
     font-weight: 650;
     padding: 0.55rem 1.1rem;
@@ -265,6 +504,11 @@ h3 {
     color: #ffffff;
 }
 
+.stButton > button:focus-visible {
+    outline: 2px solid var(--accent-cyan);
+    outline-offset: 2px;
+}
+
 
 /* ============================================================
    TABS
@@ -278,6 +522,7 @@ h3 {
 .stTabs [data-baseweb="tab"] {
     color: var(--text-muted);
     font-weight: 600;
+    transition: color 0.15s ease;
 }
 
 .stTabs [aria-selected="true"] {
@@ -295,17 +540,31 @@ h3 {
     color: var(--text-primary) !important;
     border: 1px solid var(--border-subtle) !important;
     border-radius: 8px !important;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.stTextInput input:focus, .stNumberInput input:focus {
+    border-color: var(--accent-blue) !important;
+    box-shadow: 0 0 0 3px var(--glow-blue) !important;
 }
 
 
 /* ============================================================
-   DATAFRAME
+   DATAFRAME / TABLES
    ============================================================ */
 
 [data-testid="stDataFrame"] {
     border-radius: 14px;
     overflow: hidden;
     border: 1px solid var(--border-subtle);
+}
+
+[data-testid="stDataFrame"] div[role="row"]:nth-child(even) {
+    background: rgba(255, 255, 255, 0.015);
+}
+
+[data-testid="stDataFrame"] div[role="row"]:hover {
+    background: var(--bg-card-hover) !important;
 }
 
 
@@ -329,6 +588,68 @@ h3 {
     border: 1px solid var(--border-subtle);
     border-radius: 14px;
     padding: 14px 18px;
+    transition: border-color 0.18s ease;
+}
+
+[data-testid="stMetric"]:hover {
+    border-color: var(--border-glow);
+}
+
+[data-testid="stMetricValue"] {
+    font-family: var(--font-display);
+    font-variant-numeric: tabular-nums;
+}
+
+
+/* ============================================================
+   TOOLTIP  (add class="tooltip" + data-tip="...")
+   ============================================================ */
+
+.tooltip {
+    position: relative;
+    border-bottom: 1px dashed var(--text-muted);
+    cursor: help;
+}
+
+.tooltip::after {
+    content: attr(data-tip);
+    position: absolute;
+    bottom: 130%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--bg-card-hover);
+    border: 1px solid var(--border-glow);
+    color: var(--text-primary);
+    font-size: 0.76rem;
+    padding: 6px 10px;
+    border-radius: 8px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s ease;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+    z-index: 10;
+}
+
+.tooltip:hover::after {
+    opacity: 1;
+}
+
+
+/* ============================================================
+   SKELETON LOADING SHIMMER  (add class="skeleton" to a placeholder div)
+   ============================================================ */
+
+.skeleton {
+    border-radius: 10px;
+    background: linear-gradient(100deg, var(--bg-card) 30%, var(--bg-card-hover) 50%, var(--bg-card) 70%);
+    background-size: 200% 100%;
+    animation: shimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+    0%   { background-position: 150% 0; }
+    100% { background-position: -50% 0; }
 }
 
 
@@ -343,9 +664,16 @@ hr {
     border-top: 1px solid var(--border-subtle);
 }
 
+.divider-glow {
+    height: 1px;
+    margin: 1.5rem 0;
+    border: none;
+    background: linear-gradient(90deg, transparent, var(--border-glow) 50%, transparent);
+}
+
 
 /* ============================================================
-   SCROLLBAR (nice-to-have polish)
+   SCROLLBAR
    ============================================================ */
 
 ::-webkit-scrollbar {
@@ -361,4 +689,19 @@ hr {
 }
 ::-webkit-scrollbar-thumb:hover {
     background: var(--accent-blue);
+}
+
+
+/* ============================================================
+   ACCESSIBILITY — respect reduced motion preference
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+    .stApp::before,
+    .kpi-card.live::before,
+    .live-dot,
+    .ticker-track,
+    .skeleton {
+        animation: none !important;
+    }
 }
